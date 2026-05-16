@@ -1,0 +1,6 @@
+,Accuracy,Precision,Recall,F1-Score,ROC-AUC
+Logistic Regression,0.749,0.6407,0.6524,0.6465,0.7881
+K-Nearest Neighbors,0.7607,0.672,0.6245,0.6474,0.7838
+Naive Bayes,0.7403,0.637,0.6084,0.6224,0.77
+Support Vector Machine,0.7667,0.7135,0.5626,0.6291,0.785
+Random Forest,0.7639,0.6711,0.645,0.6578,0.8091
