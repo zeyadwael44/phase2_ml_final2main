@@ -7,10 +7,10 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 def load_and_preprocess():
 
     # ── Load dataset splits ─────────────────────────────────────────────
-    X_train_df = pd.read_csv("X_train.csv")
-    X_test_df  = pd.read_csv("X_test.csv")
-    y_train    = pd.read_csv("y_train.csv").squeeze()
-    y_test     = pd.read_csv("y_test.csv").squeeze()
+    X_train_df = pd.read_csv("phase2_ml_final2/X_train.csv")
+    X_test_df  = pd.read_csv("phase2_ml_final2/X_test.csv")
+    y_train    = pd.read_csv("phase2_ml_final2/y_train.csv").squeeze()
+    y_test     = pd.read_csv("phase2_ml_final2/y_test.csv").squeeze()
 
     print(f"X_train: {X_train_df.shape}, X_test: {X_test_df.shape}")
 
@@ -28,7 +28,7 @@ def load_and_preprocess():
     X_test[:, numerical_idx]  = scaler.transform(X_test[:, numerical_idx])
 
     # ── Label encoders (optional reference only) ────────────────────────
-    df_raw = pd.read_csv("WithdrawlStudents.csv")
+    df_raw = pd.read_csv("phase2_ml_final2/WithdrawlStudents.csv")
     df_raw["imd-band"] = df_raw["imd-band"].fillna("Unknown")
 
     categorical_cols = [

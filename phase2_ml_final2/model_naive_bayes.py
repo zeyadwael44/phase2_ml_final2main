@@ -4,15 +4,15 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 import numpy as np
 
 
-# ─────────────────────────────────────────────
+
 # Load data
-# ─────────────────────────────────────────────
+
 X_train, X_test, y_train, y_test, skf, scaler, encoders = load_and_preprocess()
 
 
-# ─────────────────────────────────────────────
+
 # GRID SEARCH (ONLY applicable method for NB)
-# ─────────────────────────────────────────────
+
 smoothing_values = [1e-12, 1e-11, 1e-10, 1e-9, 1e-8]
 
 best_smoothing = None
@@ -40,9 +40,9 @@ def evaluate_model(smoothing):
     return np.mean(fold_scores)
 
 
-# ─────────────────────────────────────────────
+
 # Hyperparameter tuning
-# ─────────────────────────────────────────────
+
 for s in smoothing_values:
     score = evaluate_model(s)
     print(f"var_smoothing={s} | CV F1={score:.4f}")
@@ -52,17 +52,17 @@ for s in smoothing_values:
         best_smoothing = s
 
 
-# ─────────────────────────────────────────────
+
 # Best parameter result
-# ─────────────────────────────────────────────
+
 print("\n===== BEST PARAMETER =====\n")
 print("Best var_smoothing:", best_smoothing)
 print("Best CV F1-score:", round(best_score, 4))
 
 
-# ─────────────────────────────────────────────
+
 # Final model training
-# ─────────────────────────────────────────────
+
 print("\n===== FINAL TEST RESULTS =====\n")
 
 final_model = GaussianNB(var_smoothing=best_smoothing)
@@ -71,9 +71,9 @@ final_model.fit(X_train, y_train)
 y_pred = final_model.predict(X_test)
 
 
-# ─────────────────────────────────────────────
+
 # Evaluation metrics
-# ─────────────────────────────────────────────
+
 print("Accuracy: ", round(accuracy_score(y_test, y_pred), 4))
 print("Precision:", round(precision_score(y_test, y_pred), 4))
 print("Recall:   ", round(recall_score(y_test, y_pred), 4))
