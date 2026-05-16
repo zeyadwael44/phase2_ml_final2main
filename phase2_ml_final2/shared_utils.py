@@ -115,67 +115,6 @@ def evaluate_model(name, model, X_test, y_test):
         'y_pred_prob': y_pred_prob,
     }
 
-
-# NEW: Confusion matrix visualisation 
-def plot_confusion_matrix(name, results, filename):
-
-    
-    cm    = results['CM']
-    total = cm.sum()
-
-    # Per-cell text: count + role + % of total
-    labels = [
-        [f"{cm[0,0]}\n(TN)\n{cm[0,0]/total*100:.1f}%",
-         f"{cm[0,1]}\n(FP)\n{cm[0,1]/total*100:.1f}%"],
-        [f"{cm[1,0]}\n(FN)\n{cm[1,0]/total*100:.1f}%",
-         f"{cm[1,1]}\n(TP)\n{cm[1,1]/total*100:.1f}%"],
-    ]
-
-    # Blue = correct, Red = error
-    cell_colors = [
-        ['#185FA5', "#F5EFED"],   # row 0: TN=blue, FP=red
-        ["#DAD2CF", '#185FA5'],   # row 1: FN=red,  TP=blue
-    ]
-
-    fig, ax = plt.subplots(figsize=(6, 5))
-    fig.patch.set_facecolor('#0f1117')
-
-    for i in range(2):
-        for j in range(2):
-            ax.add_patch(plt.Rectangle(
-                (j - 0.5, i - 0.5), 1, 1,
-                color=cell_colors[i][j], alpha=0.75, zorder=0
-            ))
-            ax.text(
-                j, i, labels[i][j],
-                ha='center', va='center',
-                fontsize=13, fontweight='bold', color='white', zorder=1
-            )
-
-    ax.set_xticks([0, 1])
-    ax.set_yticks([0, 1])
-    ax.set_xticklabels(['Predicted: Stay (0)', 'Predicted: Withdraw (1)'], fontsize=10)
-    ax.set_yticklabels(['Actual: Stay (0)', 'Actual: Withdraw (1)'], fontsize=10)
-    ax.set_xlim(-0.5, 1.5)
-    ax.set_ylim(-0.5, 1.5)
-    ax.set_title(f'Confusion Matrix — {name}',
-                 fontsize=13, fontweight='bold', color='#e8eaf6', pad=14)
-    ax.set_xlabel('Predicted Label', fontsize=11, labelpad=8)
-    ax.set_ylabel('Actual Label',    fontsize=11, labelpad=8)
-
-    legend_handles = [
-        mpatches.Patch(color='#185FA5', alpha=0.75, label='Correct prediction (TN / TP)'),
-        mpatches.Patch(color='#993C1D', alpha=0.75, label='Incorrect prediction (FP / FN)'),
-    ]
-    ax.legend(handles=legend_handles, loc='upper center',
-              bbox_to_anchor=(0.5, -0.18), ncol=2, fontsize=9, framealpha=0)
-
-    plt.tight_layout()
-    plt.savefig(filename, dpi=150, bbox_inches='tight', facecolor='#0f1117')
-    plt.close()
-    print(f"  Saved: {filename}")
-
-
 # ── SVM: Lab-7-style confusion matrix ────────────────────────────────────────
 def plot_svm_confusion_matrix(name, y_test, y_pred, filename):
     """

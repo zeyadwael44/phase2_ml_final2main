@@ -145,4 +145,3 @@ print("F1:", round(f1_score(y_test, grid_pred), 4))
 
 print("\nConfusion Matrix:")
 print(confusion_matrix(y_test, grid_pred))
-
