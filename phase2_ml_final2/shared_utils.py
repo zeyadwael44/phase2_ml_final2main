@@ -10,7 +10,10 @@ from sklearn.metrics import (
 from sklearn.model_selection import StratifiedKFold, cross_validate
 import warnings
 warnings.filterwarnings('ignore')
-
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
+from sklearn.neighbors import KNeighborsClassifier
+import numpy as np
 # Plot style 
 plt.rcParams.update({
     'figure.facecolor': '#0f1117', 'axes.facecolor': '#1a1d2e',
@@ -115,6 +118,7 @@ def evaluate_model(name, model, X_test, y_test):
 
 # NEW: Confusion matrix visualisation 
 def plot_confusion_matrix(name, results, filename):
+
     
     cm    = results['CM']
     total = cm.sum()
@@ -170,3 +174,45 @@ def plot_confusion_matrix(name, results, filename):
     plt.savefig(filename, dpi=150, bbox_inches='tight', facecolor='#0f1117')
     plt.close()
     print(f"  Saved: {filename}")
+
+def plot_knn_decision_boundary(k):
+
+    # ---- Reduce to 2D using PCA ----
+    pca = PCA(n_components=2)
+    X_2d = pca.fit_transform(X_train)
+
+    # ---- Train model on 2D data ----
+    model = KNeighborsClassifier(n_neighbors=k)
+    model.fit(X_2d, y_train)
+
+    # ---- Create mesh grid ----
+    h = 0.02
+    x_min, x_max = X_2d[:, 0].min() - 1, X_2d[:, 0].max() + 1
+    y_min, y_max = X_2d[:, 1].min() - 1, X_2d[:, 1].max() + 1
+
+    xx, yy = np.meshgrid(
+        np.arange(x_min, x_max, h),
+        np.arange(y_min, y_max, h)
+    )
+
+    grid_points = np.c_[xx.ravel(), yy.ravel()]
+    Z = model.predict(grid_points)
+    Z = Z.reshape(xx.shape)
+
+    # ---- Plot ----
+    plt.figure(figsize=(7, 5))
+
+    plt.contourf(xx, yy, Z, alpha=0.3)
+
+    plt.scatter(
+        X_2d[:, 0],
+        X_2d[:, 1],
+        c=y_train,
+        edgecolor='k'
+    )
+
+    plt.title(f"KNN Decision Boundary (K={k})")
+    plt.xlabel("PCA Component 1")
+    plt.ylabel("PCA Component 2")
+
+    plt.show()
