@@ -4,22 +4,26 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 import numpy as np
 
 
-
+# ─────────────────────────────────────────────
+# Load data
+# ─────────────────────────────────────────────
 X_train, X_test, y_train, y_test, skf, scaler, encoders = load_and_preprocess()
 
 
-
-
-grid_values = [1e-12, 1e-11, 1e-10, 1e-9, 1e-8]
-
-random_values = np.logspace(-13, -7, 15)
+# ─────────────────────────────────────────────
+# GRID SEARCH (ONLY applicable method for NB)
+# ─────────────────────────────────────────────
+smoothing_values = [1e-12, 1e-11, 1e-10, 1e-9, 1e-8]
 
 best_smoothing = None
 best_score = -1
 
 
+print("\n===== CROSS-VALIDATION GRID SEARCH =====\n")
+
 
 def evaluate_model(smoothing):
+    """Evaluate GaussianNB using Stratified 5-Fold CV"""
     fold_scores = []
 
     for train_idx, val_idx in skf.split(X_train, y_train):
@@ -36,40 +40,30 @@ def evaluate_model(smoothing):
     return np.mean(fold_scores)
 
 
-
-print("\n===== GRID SEARCH =====\n")
-
-for s in grid_values:
+# ─────────────────────────────────────────────
+# Hyperparameter tuning
+# ─────────────────────────────────────────────
+for s in smoothing_values:
     score = evaluate_model(s)
-    print(f"Grid | var_smoothing={s} | F1={score:.4f}")
+    print(f"var_smoothing={s} | CV F1={score:.4f}")
 
     if score > best_score:
         best_score = score
         best_smoothing = s
 
 
-
-print("\n===== RANDOM SEARCH =====\n")
-
-random_samples = np.random.choice(random_values, size=5, replace=False)
-
-for s in random_samples:
-    score = evaluate_model(s)
-    print(f"Random | var_smoothing={s:.2e} | F1={score:.4f}")
-
-    if score > best_score:
-        best_score = score
-        best_smoothing = s
-
-
-
-print("\n===== BEST RESULT =====\n")
+# ─────────────────────────────────────────────
+# Best parameter result
+# ─────────────────────────────────────────────
+print("\n===== BEST PARAMETER =====\n")
 print("Best var_smoothing:", best_smoothing)
-print("Best CV F1:", round(best_score, 4))
+print("Best CV F1-score:", round(best_score, 4))
 
 
-
-print("\n===== FINAL TEST =====\n")
+# ─────────────────────────────────────────────
+# Final model training
+# ─────────────────────────────────────────────
+print("\n===== FINAL TEST RESULTS =====\n")
 
 final_model = GaussianNB(var_smoothing=best_smoothing)
 final_model.fit(X_train, y_train)
@@ -77,6 +71,9 @@ final_model.fit(X_train, y_train)
 y_pred = final_model.predict(X_test)
 
 
+# ─────────────────────────────────────────────
+# Evaluation metrics
+# ─────────────────────────────────────────────
 print("Accuracy: ", round(accuracy_score(y_test, y_pred), 4))
 print("Precision:", round(precision_score(y_test, y_pred), 4))
 print("Recall:   ", round(recall_score(y_test, y_pred), 4))
