@@ -205,8 +205,7 @@ for col in CATEGORICAL_COLS:
 #  Step 4: Separate features and target 
 X = df_clean.drop(columns=['withdrawl'])
 y = df_clean['withdrawl']
-print(f"\nFeatures shape: {X.shape}")
-print(f"Target shape:   {y.shape}")
+
 print(f"Feature names:  {list(X.columns)}")
 
 #  Step 5: Train/Test Split (80/20, seed=42) 
