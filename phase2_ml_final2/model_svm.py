@@ -1,5 +1,5 @@
 from preprocessing import load_and_preprocess
-from shared_utils import plot_svm_confusion_matrix, plot_svm_decision_boundary
+from shared_utils import plot_confusion_matrix, plot_confusion_matrix, plot_svm_decision_boundary
 from sklearn.svm import SVC
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import (
@@ -143,7 +143,7 @@ print("F1:", round(f1_score(y_test, random_pred, zero_division=0), 4))
 print("\nConfusion Matrix:")
 print(confusion_matrix(y_test, random_pred))
 
-plot_svm_confusion_matrix(
+plot_confusion_matrix(
     "SVM Random Search Best",
     y_test, random_pred,
     "figure_svm_cm_random.png",
@@ -177,7 +177,7 @@ print("F1:", round(f1_score(y_test, grid_pred, zero_division=0), 4))
 print("\nConfusion Matrix:")
 print(confusion_matrix(y_test, grid_pred))
 
-plot_svm_confusion_matrix(
+plot_confusion_matrix(
     "SVM Grid Search Best",
     y_test, grid_pred,
     "figure_svm_cm_grid.png",
