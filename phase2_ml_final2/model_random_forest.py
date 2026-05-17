@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> 2e5f513 (resolve)
 from preprocessing import load_and_preprocess
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import (
@@ -196,4 +201,3 @@ su.plot_rf_feature_importance(
     grid_model,
     feature_names,
     "rf_grid_feature_importance.png"
-)
