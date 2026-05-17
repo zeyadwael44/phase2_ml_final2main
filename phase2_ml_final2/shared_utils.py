@@ -116,27 +116,11 @@ def evaluate_model(name, model, X_test, y_test):
     }
 
 # ── SVM: Lab-7-style confusion matrix ────────────────────────────────────────
-def plot_svm_confusion_matrix(name, y_test, y_pred, filename):
-    """
-    Render a ConfusionMatrixDisplay (Lab-7 style) for an SVM result and
-    save it to `filename`.
+# ─────────────────────────────────────────────
+# CONFUSION MATRIX (GENERAL MODELS)
+# ─────────────────────────────────────────────
+def plot_confusion_matrix(name, y_test, y_pred, filename, labels=('Class 0', 'Class 1')):
 
-    Parameters
-    ----------
-    name     : str   – model label shown in the title (e.g. "SVM Grid Best")
-    y_test   : array-like – true labels
-    y_pred   : array-like – predicted labels
-    filename : str   – path to save the PNG
-
-    Usage in model_svm.py
-    ----------------------
-        from shared_utils import plot_svm_confusion_matrix
-        plot_svm_confusion_matrix(
-            "SVM Grid Best",
-            y_test, grid_pred,
-            "figure_svm_cm_grid.png",
-        )
-    """
     cm = confusion_matrix(y_test, y_pred)
 
     fig, ax = plt.subplots(figsize=(6, 5))
@@ -145,8 +129,9 @@ def plot_svm_confusion_matrix(name, y_test, y_pred, filename):
 
     disp = ConfusionMatrixDisplay(
         confusion_matrix=cm,
-        display_labels=['Stay (0)', 'Withdraw (1)'],
+        display_labels=labels,
     )
+
     disp.plot(
         cmap='Blues',
         colorbar=False,
@@ -154,38 +139,41 @@ def plot_svm_confusion_matrix(name, y_test, y_pred, filename):
         values_format='d',
     )
 
-    # Style the text inside cells so it reads on the dark background
+    # Style text inside cells
     for text in disp.text_.ravel():
         text.set_fontsize(14)
         text.set_fontweight('bold')
 
-    # Axis cosmetics to match the project's dark theme
     ax.set_title(f'Confusion Matrix — {name}',
                  fontsize=13, fontweight='bold', color='#e8eaf6', pad=12)
-    ax.set_xlabel('Predicted Label', fontsize=11, color='#c8cce8', labelpad=8)
-    ax.set_ylabel('Actual Label',    fontsize=11, color='#c8cce8', labelpad=8)
+
+    ax.set_xlabel('Predicted Label', fontsize=11, color='#c8cce8')
+    ax.set_ylabel('Actual Label', fontsize=11, color='#c8cce8')
+
     ax.tick_params(colors='#8b8fad')
+
     for spine in ax.spines.values():
         spine.set_edgecolor('#3a3d5c')
 
-    # Annotate each cell with its TN / FP / FN / TP role
+    # annotate TN FP FN TP
     roles = [['TN', 'FP'], ['FN', 'TP']]
     total = cm.sum()
+
     for i in range(2):
         for j in range(2):
-            pct = cm[i, j] / total * 100
+            pct = cm[i, j] / total * 100 if total != 0 else 0
             ax.text(
                 j, i + 0.35,
-                f'({roles[i][j]})  {pct:.1f}%',
+                f'({roles[i][j]}) {pct:.1f}%',
                 ha='center', va='center',
-                fontsize=9, color='#8b8fad',
+                fontsize=9, color='#8b8fad'
             )
 
     plt.tight_layout()
     plt.savefig(filename, dpi=150, bbox_inches='tight', facecolor='#0f1117')
     plt.close()
-    print(f"  Saved: {filename}")
 
+    print(f"Saved: {filename}")
 
 # ── SVM: Lab-7-style decision boundary (PCA → 2D) ────────────────────────────
 def plot_svm_decision_boundary(name, model, X_train, y_train, X_test, y_test, filename):
@@ -332,3 +320,154 @@ def plot_svm_decision_boundary(name, model, X_train, y_train, X_test, y_test, fi
     plt.savefig(filename, dpi=150, bbox_inches='tight', facecolor='#0f1117')
     plt.close()
     print(f"  Saved: {filename}")
+
+    # =========================================================
+# VISUALIZATION FUNCTIONS (NB / GENERAL MODELS)
+# =========================================================
+
+
+# ─────────────────────────────────────────────
+# ROC CURVE
+# ─────────────────────────────────────────────
+def plot_roc_curve(name, y_test, y_prob, filename):
+
+    fpr, tpr, _ = roc_curve(y_test, y_prob)
+    auc_score = roc_auc_score(y_test, y_prob)
+
+    plt.figure(figsize=(6, 5))
+
+    plt.plot(fpr, tpr, label=f"AUC = {auc_score:.4f}")
+    plt.plot([0, 1], [0, 1], linestyle='--')
+
+    plt.title(f"ROC Curve — {name}")
+    plt.xlabel("False Positive Rate")
+    plt.ylabel("True Positive Rate")
+
+    plt.legend()
+    plt.grid(True)
+
+    plt.tight_layout()
+    plt.savefig(filename, dpi=150)
+    plt.close()
+
+    print(f"Saved: {filename}")
+
+
+# ─────────────────────────────────────────────
+# METRICS BAR CHART
+# ─────────────────────────────────────────────
+def plot_metrics_bar(name, metrics_dict, filename):
+
+    labels = list(metrics_dict.keys())
+    values = list(metrics_dict.values())
+
+    plt.figure(figsize=(7, 5))
+
+    plt.bar(labels, values)
+
+    plt.ylim(0, 1)
+
+    plt.title(f"Metrics — {name}")
+
+    plt.grid(axis='y')
+
+    plt.tight_layout()
+    plt.savefig(filename, dpi=150)
+    plt.close()
+
+    print(f"Saved: {filename}")
+
+
+# ─────────────────────────────────────────────
+# FEATURE DISTRIBUTION
+# ─────────────────────────────────────────────
+def plot_feature_distribution(X_train, y_train, feature_index, filename):
+
+    plt.figure(figsize=(7, 5))
+
+    plt.hist(X_train[y_train == 0][:, feature_index],
+             bins=30, alpha=0.5, label="Class 0")
+
+    plt.hist(X_train[y_train == 1][:, feature_index],
+             bins=30, alpha=0.5, label="Class 1")
+
+    plt.title(f"Feature {feature_index} Distribution")
+
+    plt.legend()
+    plt.grid(True)
+
+    plt.tight_layout()
+    plt.savefig(filename, dpi=150)
+    plt.close()
+
+    print(f"Saved: {filename}")
+
+
+# ─────────────────────────────────────────────
+# GRID SEARCH VISUALIZATION
+# ─────────────────────────────────────────────
+def plot_grid_search_results(param_values, scores, param_name, model_name, filename):
+
+    plt.figure(figsize=(7, 5))
+
+    plt.plot(param_values, scores, marker='o')
+    plt.xscale('log')
+
+    plt.title(f"Grid Search — {model_name}")
+    plt.xlabel(param_name)
+    plt.ylabel("F1-score")
+
+    plt.grid(True)
+
+    plt.tight_layout()
+    plt.savefig(filename, dpi=150)
+    plt.close()
+
+    print(f"Saved: {filename}")
+
+    
+
+def plot_logistic_coefficients(model, feature_names, filename, top_n=15):
+
+    coefs = model.coef_[0]
+
+    idx = np.argsort(np.abs(coefs))[-top_n:]
+    selected_features = np.array(feature_names)[idx]
+    selected_coefs = coefs[idx]
+
+    plt.figure(figsize=(8, 5))
+
+    plt.barh(selected_features, selected_coefs)
+
+    plt.title("Logistic Regression Feature Importance")
+
+    plt.tight_layout()
+    plt.savefig(filename, dpi=150)
+    plt.close()
+
+    print(f"Saved: {filename}")
+
+
+def plot_rf_feature_importance(model, feature_names, filename, top_n=15):
+
+    import numpy as np
+
+    importances = model.feature_importances_
+
+    idx = np.argsort(importances)[-top_n:]
+    selected_features = np.array(feature_names)[idx]
+    selected_importances = importances[idx]
+
+    plt.figure(figsize=(8, 5))
+
+    plt.barh(selected_features, selected_importances)
+
+    plt.title("Random Forest Feature Importance")
+
+    plt.xlabel("Importance Score")
+
+    plt.tight_layout()
+    plt.savefig(filename, dpi=150)
+    plt.close()
+
+    print(f"Saved: {filename}")
