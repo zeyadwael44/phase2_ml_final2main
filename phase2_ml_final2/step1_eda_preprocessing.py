@@ -50,7 +50,7 @@ print("\nMissing Values:")
 missing = df.isnull().sum()
 print(missing[missing > 0])
 
-#  Class distribution ─
+#  Class distribution (imbalance or not)
 print("\nClass Distribution (withdrawl):")
 counts = df['withdrawl'].value_counts()
 print(f"  Not Withdrawn (0): {counts[0]:,} ({counts[0]/len(df)*100:.1f}%)")
