@@ -1,6 +1,7 @@
-,Accuracy,Precision,Recall,F1-Score,ROC-AUC
-Logistic Regression,0.749,0.6407,0.6524,0.6465,0.7881
-K-Nearest Neighbors,0.7607,0.672,0.6245,0.6474,0.7838
-Naive Bayes,0.7403,0.637,0.6084,0.6224,0.77
-Support Vector Machine,0.7667,0.7135,0.5626,0.6291,0.785
-Random Forest,0.7639,0.6711,0.645,0.6578,0.8091
+,Accuracy,Precision,Recall,F1-Score,ROC-AUC,Notes
+Baseline (Majority Class),0.6483,0.0,0.0,0.0,0.5,Predicts majority class only — lower bound
+Logistic Regression,0.749,0.6407,0.6524,0.6465,0.7881,Best C selected via 5-fold CV grid search
+K-Nearest Neighbors,0.7607,0.672,0.6245,0.6474,0.7838,Best K and weights via grid + random search
+Naive Bayes,0.7403,0.637,0.6084,0.6224,0.77,Best var_smoothing via grid search
+Support Vector Machine,0.7667,0.7135,0.5626,0.6291,0.785,Trained on 3000-sample stratified subset
+Random Forest,0.7639,0.6711,0.645,0.6578,0.8091,Best F1 and ROC-AUC; class_weight=balanced
